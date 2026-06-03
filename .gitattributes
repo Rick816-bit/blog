@@ -1,0 +1,8 @@
+# 仓库内统一用 LF 换行（部署到 Linux 主机更稳，避免 CRLF 噪音）
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary

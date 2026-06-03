@@ -1,0 +1,11 @@
+# 敏感信息：含密码哈希与会话密钥，绝不提交
+config.json
+
+# 依赖与本地工具配置
+node_modules/
+.claude/
+
+# 原子写入留下的临时文件
+data/posts.json.tmp-*
+
+# 说明：data/posts.json（你的文章）已纳入版本管理，作为备份 + 部署初始内容

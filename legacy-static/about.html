@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>关于 · Rick's Blog</title>
+  <meta name="description" content="关于 Rick 和这个博客。" />
+  <link rel="stylesheet" href="style.css" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("rick-blog-theme");
+        if (!t) t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        document.documentElement.dataset.theme = t;
+        var h = localStorage.getItem("rick-blog-hue");
+        if (h) document.documentElement.style.setProperty("--hue", h);
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body>
+  <nav class="navbar" id="navbar">
+    <div class="navbar-inner">
+      <a class="nav-brand" href="index.html"><span class="brand-dot"></span>Rick's Blog</a>
+      <div class="nav-menu">
+        <a href="index.html" class="nav-link">首页</a>
+        <a href="archive.html" class="nav-link">归档</a>
+        <a href="about.html" class="nav-link active">关于</a>
+      </div>
+      <div class="nav-actions">
+        <button class="icon-btn" id="hueBtn" aria-label="主题色" title="主题色">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+        </button>
+        <button class="icon-btn" id="themeBtn" aria-label="深浅模式" title="深浅模式">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <button class="icon-btn nav-menu-toggle" id="menuBtn" aria-label="菜单" title="菜单">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div class="hue-panel" id="huePanel">
+          <div class="hue-row"><span>主题色相</span><span id="hueValue">250</span></div>
+          <input type="range" min="0" max="360" value="250" id="hueSlider" class="hue-slider" aria-label="主题色相" />
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <header class="banner banner-sm">
+    <h1 class="banner-title">关于</h1>
+  </header>
+
+  <div class="main-wrapper">
+    <div class="main-grid">
+      <aside class="sidebar">
+        <div class="card profile-card onload" style="--d:0">
+          <div class="avatar">R</div>
+          <div class="profile-name">Rick</div>
+          <div class="profile-bio">白天写代码，晚上写字。<br />相信好工具与清晰思考的力量。</div>
+          <div class="socials">
+            <a class="social-btn" href="#" title="GitHub" aria-label="GitHub"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1.27a11 11 0 0 0-3.48 21.46c.55.09.73-.24.73-.53v-1.85c-3.03.66-3.67-1.46-3.67-1.46-.5-1.26-1.21-1.6-1.21-1.6-.99-.67.07-.66.07-.66 1.1.08 1.67 1.13 1.67 1.13.97 1.66 2.55 1.18 3.17.9.1-.7.38-1.18.69-1.45-2.42-.28-4.96-1.21-4.96-5.38 0-1.19.42-2.16 1.13-2.92-.11-.28-.49-1.39.11-2.9 0 0 .92-.29 3.01 1.12a10.5 10.5 0 0 1 5.48 0c2.09-1.41 3.01-1.12 3.01-1.12.6 1.51.22 2.62.11 2.9.7.76 1.13 1.73 1.13 2.92 0 4.18-2.55 5.1-4.98 5.37.39.34.74 1 .74 2.02v3c0 .29.18.63.74.52A11 11 0 0 0 12 1.27"/></svg></a>
+            <a class="social-btn" href="mailto:rick@example.com" title="Email" aria-label="Email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg></a>
+            <a class="social-btn" href="#" title="RSS" aria-label="RSS"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg></a>
+          </div>
+        </div>
+
+        <div class="card widget onload" style="--d:1">
+          <div class="widget-title">本站资料</div>
+          <ul class="stat-list">
+            <li><span>文章</span><span>2</span></li>
+            <li><span>分类</span><span>2</span></li>
+            <li><span>标签</span><span>5</span></li>
+            <li><span>运行</span><span id="runDays">—</span></li>
+          </ul>
+        </div>
+      </aside>
+
+      <main class="content">
+        <article class="card article onload" style="--d:1">
+          <header class="article-head">
+            <h1 class="article-title">关于我</h1>
+          </header>
+          <div class="prose">
+            <p>嗨，我是 Rick。一个喜欢折腾、也喜欢把事情想明白的人。</p>
+            <p>白天写代码，晚上写字。我相信好的工具和清晰的思考能让人走得更远，所以这个博客既是我的笔记本，也是我和世界对话的窗口。</p>
+
+            <h2>你能在这里看到什么</h2>
+            <p>技术笔记、读书随想、产品思考，偶尔还有一些生活碎片。没有固定主题，只写我真正想写的东西。</p>
+
+            <h2>关于这个博客</h2>
+            <p>页面设计参考了 <a href="https://paresta.top" target="_blank" rel="noopener">paresta.top</a> 所用的 Fuwari / Mizuki 主题风格，但整站是纯手写的 HTML / CSS / JavaScript，<strong>零依赖、零构建</strong>，双击即可打开。右上角可以切换深浅色、拖动滑块实时更换主题色。</p>
+
+            <h2>联系我</h2>
+            <p>邮箱：<a href="mailto:rick@example.com">rick@example.com</a></p>
+          </div>
+        </article>
+      </main>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>© 2026 Rick · Rick's Blog</p>
+    <p>参考 <a href="https://paresta.top" target="_blank" rel="noopener">paresta.top</a>（Fuwari / Mizuki 设计）· 纯手写 HTML / CSS / JS，零依赖</p>
+  </footer>
+
+  <button class="to-top" id="toTop" aria-label="回到顶部" title="回到顶部">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+  </button>
+
+  <script src="theme.js"></script>
+</body>
+</html>

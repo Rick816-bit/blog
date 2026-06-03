@@ -1,0 +1,13 @@
+{
+  "name": "ricks-blog",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Rick's Blog — 自建博客：访客只读，登录后台可发文。零依赖（仅 Node 内置模块）。",
+  "scripts": {
+    "start": "node server.js",
+    "setup": "node setup.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
