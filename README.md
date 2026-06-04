@@ -68,13 +68,26 @@ my_blog/
 | 换端口 | `set PORT=8080 && node server.js`（Windows CMD） |
 | 停止 | 在运行窗口按 `Ctrl + C` |
 
+## 🔧 环境变量（部署 / 进阶用）
+
+| 变量 | 作用 | 默认 |
+|---|---|---|
+| `PORT` | 监听端口 | `3000` |
+| `ADMIN_PASSWORD` | **首次启动**时用它设管理员密码；部署到云上务必设置，否则密码会随机生成且只出现在日志里 | 随机生成 |
+| `DATA_DIR` | 文章 `posts.json` 所在目录 | `./data` |
+| `UPLOADS_DIR` | 上传图片目录 | `./public/uploads` |
+| `CONFIG_PATH` | 管理员密码配置文件路径 | `./config.json` |
+
+> 部署到 **Render / Railway**：设 `ADMIN_PASSWORD` 即可稳定登录（会话用 `sessionSecret` 签名，重启 / 重新部署都不掉线）。想让「网页后台写的文章和图不丢」，挂一个持久卷，并把 `DATA_DIR`、`UPLOADS_DIR`、`CONFIG_PATH` 都指到卷里。生产环境（HTTPS 反代）下登录 Cookie 会自动带 `Secure`。站点信息（站名 / 作者 / 简介 / 分享图等）集中在 `lib/templates.js` 顶部的 `SITE`。
+
 ## 🌐 之后想公开上网
 
 当前为本地/局域网。想让任何人访问时，两条常见路径：
 
 1. **内网穿透**（最快）：用 Cloudflare Tunnel 或 ngrok 把本机 3000 端口映射成公网网址。
 2. **部署到云**：上传到 Render / Railway / 一台 VPS，跑 `node server.js`。
-   - 注意：文章存在本地 `data/posts.json`，部署到「无持久磁盘」的平台时要挂载持久存储，或改用数据库。
-   - 公网务必走 HTTPS，并给会话 Cookie 加 `Secure` 标志（`server.js` 里有注释位置）。
+   - 注意：文章存在本地 `data/posts.json`，部署到「无持久磁盘」的平台时要挂载持久存储，并用上面的 `DATA_DIR` / `UPLOADS_DIR` / `CONFIG_PATH` 指过去（否则重新部署会丢内容）。
+   - 公网走 HTTPS 即可：会话 Cookie 在 HTTPS 反代下会自动加 `Secure`，会话本身也已用密钥签名（重启不掉线）。
+   - 已内置 `/sitemap.xml`、`/robots.txt`、RSS 与 Open Graph 分享卡片，利于被搜索引擎收录、分享有缩略图。
 
 需要时我可以帮你接上其中一种。

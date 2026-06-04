@@ -20,7 +20,7 @@ const T = require("./lib/templates");
 const PORT = parseInt(process.env.PORT, 10) || 3000;
 const HOST = "0.0.0.0";
 const PUBLIC_DIR = path.join(__dirname, "public");
-const UPLOADS_DIR = path.join(PUBLIC_DIR, "uploads");
+const UPLOADS_DIR = process.env.UPLOADS_DIR || path.join(PUBLIC_DIR, "uploads");
 
 /** 校验上传文件名后缀，只放行常见图片格式（杜绝上传可执行 / SVG 等风险文件） */
 function safeImageExt(name) {
@@ -137,16 +137,21 @@ function serveUpload(res, pathname) {
   });
 }
 
-const SESSION_COOKIE = function (sid) {
-  return "sid=" + sid + "; HttpOnly; SameSite=Strict; Path=/; Max-Age=43200";
+const SESSION_COOKIE = function (sid, secure) {
+  return "sid=" + sid + "; HttpOnly; SameSite=Strict; Path=/; Max-Age=43200" + (secure ? "; Secure" : "");
 };
-const CLEAR_COOKIE = "sid=; HttpOnly; SameSite=Strict; Path=/; Max-Age=0";
+const CLEAR_COOKIE = function (secure) {
+  return "sid=; HttpOnly; SameSite=Strict; Path=/; Max-Age=0" + (secure ? "; Secure" : "");
+};
 
 const server = http.createServer(async function (req, res) {
   const parsed = url.parse(req.url, true);
   const pathname = decodeURIComponent(parsed.pathname);
   const method = req.method;
   const ip = (req.headers["x-forwarded-for"] || req.socket.remoteAddress || "").split(",")[0].trim();
+  const proto = (req.headers["x-forwarded-proto"] || "http").split(",")[0].trim();
+  const secure = proto === "https";
+  const origin = proto + "://" + (req.headers.host || ("localhost:" + PORT));
 
   try {
     /* ---- 静态资源 ---- */
@@ -161,28 +166,35 @@ const server = http.createServer(async function (req, res) {
     }
 
     /* ---- 公开页面 ---- */
-    if (method === "GET" && pathname === "/") return html(res, T.home(store.getAll(), parsed.query.page));
-    if (method === "GET" && pathname === "/archive") return html(res, T.archive(store.getAll()));
-    if (method === "GET" && pathname === "/about") return html(res, T.about());
+    if (method === "GET" && pathname === "/") return html(res, T.home(store.getAll(), parsed.query.page, origin));
+    if (method === "GET" && pathname === "/archive") return html(res, T.archive(store.getAll(), origin));
+    if (method === "GET" && pathname === "/about") return html(res, T.about(origin));
     if (method === "GET" && (pathname === "/rss.xml" || pathname === "/feed.xml")) {
-      const origin = (req.headers["x-forwarded-proto"] || "http") + "://" + (req.headers.host || ("localhost:" + PORT));
       res.writeHead(200, { "Content-Type": "application/rss+xml; charset=utf-8" });
       return res.end(T.rssFeed(store.getAll(), origin));
+    }
+    if (method === "GET" && pathname === "/sitemap.xml") {
+      res.writeHead(200, { "Content-Type": "application/xml; charset=utf-8" });
+      return res.end(T.sitemap(store.getAll(), origin));
+    }
+    if (method === "GET" && pathname === "/robots.txt") {
+      res.writeHead(200, { "Content-Type": "text/plain; charset=utf-8" });
+      return res.end("User-agent: *\nAllow: /\nDisallow: /admin\nSitemap: " + origin + "/sitemap.xml\n");
     }
     if (method === "GET" && pathname.startsWith("/tag/")) {
       const tag = pathname.slice("/tag/".length).replace(/\/+$/, "");
       const list = store.getAll().filter(function (p) { return (p.tags || []).indexOf(tag) > -1; });
-      return html(res, T.tagPage(tag, list, parsed.query.page));
+      return html(res, T.tagPage(tag, list, parsed.query.page, origin));
     }
     if (method === "GET" && pathname.startsWith("/category/")) {
       const cat = pathname.slice("/category/".length).replace(/\/+$/, "");
       const list = store.getAll().filter(function (p) { return p.category === cat; });
-      return html(res, T.categoryPage(cat, list, parsed.query.page));
+      return html(res, T.categoryPage(cat, list, parsed.query.page, origin));
     }
     if (method === "GET" && pathname.startsWith("/post/")) {
       const slug = pathname.slice("/post/".length).replace(/\/$/, "");
       const post = store.getBySlug(slug);
-      return post ? html(res, T.postPage(post)) : html(res, T.notFound(), 404);
+      return post ? html(res, T.postPage(post, origin)) : html(res, T.notFound(), 404);
     }
 
     /* ---- 登录 ---- */
@@ -192,7 +204,7 @@ const server = http.createServer(async function (req, res) {
       if (auth.verifyPassword(body.password || "", config.salt, config.hash)) {
         failed.delete(ip);
         const sess = auth.createSession();
-        return redirect(res, "/admin", SESSION_COOKIE(sess.sid));
+        return redirect(res, "/admin", SESSION_COOKIE(sess.sid, secure));
       }
       noteFail(ip);
       return html(res, T.login("密码不正确。"), 401);
@@ -209,7 +221,7 @@ const server = http.createServer(async function (req, res) {
 
       if (pathname === "/admin/logout" && method === "POST") {
         auth.destroySession(sess.sid);
-        return redirect(res, "/", CLEAR_COOKIE);
+        return redirect(res, "/", CLEAR_COOKIE(secure));
       }
       if (pathname === "/admin/new" && method === "GET") {
         return html(res, T.editor(null, sess.csrf));
@@ -283,6 +295,8 @@ function lanIPs() {
   });
   return out;
 }
+
+process.on("SIGTERM", function () { server.close(function () { process.exit(0); }); });
 
 server.listen(PORT, HOST, function () {
   const line = "─".repeat(52);
