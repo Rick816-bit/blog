@@ -4,7 +4,7 @@ import fixKatex from 'vitepress-theme-sakura/.vitepress/fix-katex'
 
 export default defineConfigWithTheme<ThemeConfig>({
   lang: 'zh-CN',
-  title: 'RiB',
+  title: 'Rick_Blog--RiB',
   head: [
     // 字体支持
     ['link', { rel: 'stylesheet', href: 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/regular.min.css' }],
