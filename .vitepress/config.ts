@@ -27,6 +27,7 @@ export default defineConfigWithTheme<ThemeConfig>({
     cover: 'https://flaribbit.github.io/vitepress-theme-sakura/60651947_p0.jpg',
     hello: 'Welcome to RiB',
     motto: 'Have some RiBs!',
+    waline: 'https://rib-black.vercel.app',
     social: [
       { icon: 'fa-github', url: 'https://github.com/Rick816-bit' },
     ],
